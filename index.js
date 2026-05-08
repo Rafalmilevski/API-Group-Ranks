@@ -3,7 +3,7 @@ const app = express();
 
 const GROUP_ID = 35091112;
 
-// ---------- 1. Username → UserId ----------
+// ---------- Username → UserId ----------
 async function getUserId(username) {
     try {
         const res = await fetch("https://users.roblox.com/v1/usernames/users", {
@@ -19,13 +19,14 @@ async function getUserId(username) {
 
         const data = await res.json();
         return data.data?.[0]?.id || null;
+
     } catch (err) {
         console.log("UserId error:", err);
         return null;
     }
 }
 
-// ---------- 2. Get group info (rank + roleId + roleName) ----------
+// ---------- Get Group Rank + RoleId ----------
 async function getGroupInfo(userId) {
     try {
         const res = await fetch(`https://groups.roblox.com/v1/users/${userId}/groups/roles`);
@@ -36,28 +37,25 @@ async function getGroupInfo(userId) {
         if (!group) {
             return {
                 rank: 0,
-                roleId: null,
-                roleName: "None"
+                roleId: null
             };
         }
 
         return {
             rank: group.role.rank,
-            roleId: group.role.id,
-            roleName: group.role.name
+            roleId: group.role.id
         };
 
     } catch (err) {
         console.log("Group error:", err);
         return {
             rank: 0,
-            roleId: null,
-            roleName: "Error"
+            roleId: null
         };
     }
 }
 
-// ---------- 3. API ROUTE ----------
+// ---------- API ROUTE ----------
 app.get("/rank", async (req, res) => {
     const user = req.query.user;
 
@@ -74,20 +72,17 @@ app.get("/rank", async (req, res) => {
     const groupInfo = await getGroupInfo(userId);
 
     res.json({
-        player: user,
-        userId: userId,
         rank: groupInfo.rank,
-        roleId: groupInfo.roleId,
-        roleName: groupInfo.roleName
+        roleId: groupInfo.roleId
     });
 });
 
-// ---------- 4. Home ----------
+// ---------- HOME ----------
 app.get("/", (req, res) => {
-    res.send("Roblox API is running 🚀");
+    res.send("Roblox Rank API is running 🚀");
 });
 
-// ---------- 5. Start ----------
+// ---------- START ----------
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
