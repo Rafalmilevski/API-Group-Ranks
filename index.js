@@ -8,8 +8,16 @@ app.get("/", (req, res) => {
 
 // Rank API
 app.get("/rank", (req, res) => {
+    const user = req.query.user;
+
+    if (!user) {
+        return res.json({
+            error: "No user provided"
+        });
+    }
+
     res.json({
-        player: "Test",
+        player: user,
         rank: 99
     });
 });
