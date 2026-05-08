@@ -1,13 +1,18 @@
 const express = require("express");
 const app = express();
 
+app.get("/", (req, res) => {
+    res.send("API is working");
+});
+
 app.get("/rank", (req, res) => {
     res.json({
-        player: "Hazem",
+        player: "Test",
         rank: 99
     });
 });
 
-app.listen(3000, () => {
-    console.log("API running");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log("Running on port " + port);
 });
