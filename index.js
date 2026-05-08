@@ -11,17 +11,20 @@ app.get("/rank", (req, res) => {
     const user = req.query.user;
 
     if (!user) {
-        return res.json({
-            error: "No user provided"
-        });
+        return res.json({ error: "No user provided" });
     }
+
+    // fake logic (you can replace later)
+    let rank = 99;
+
+    if (user.toLowerCase() === "alex") rank = 50;
+    if (user.toLowerCase() === "bob") rank = 10;
 
     res.json({
         player: user,
-        rank: 99
+        rank: rank
     });
 });
-
 // Port (IMPORTANT for Render)
 const port = process.env.PORT || 3000;
 
