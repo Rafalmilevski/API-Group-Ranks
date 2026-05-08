@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const GROUP_ID = 35091112; // change to your group id
+const GROUP_ID = 35091112;
 
 // ---------- 1. Username → UserId ----------
 async function getUserId(username) {
@@ -25,18 +25,35 @@ async function getUserId(username) {
     }
 }
 
-// ---------- 2. Get group rank ----------
-async function getGroupRank(userId) {
+// ---------- 2. Get group info (rank + roleId + roleName) ----------
+async function getGroupInfo(userId) {
     try {
         const res = await fetch(`https://groups.roblox.com/v1/users/${userId}/groups/roles`);
         const data = await res.json();
 
         const group = data.data?.find(g => g.group.id === GROUP_ID);
 
-        return group ? group.role.rank : 0;
+        if (!group) {
+            return {
+                rank: 0,
+                roleId: null,
+                roleName: "None"
+            };
+        }
+
+        return {
+            rank: group.role.rank,
+            roleId: group.role.id,
+            roleName: group.role.name
+        };
+
     } catch (err) {
-        console.log("Rank error:", err);
-        return 0;
+        console.log("Group error:", err);
+        return {
+            rank: 0,
+            roleId: null,
+            roleName: "Error"
+        };
     }
 }
 
@@ -54,21 +71,23 @@ app.get("/rank", async (req, res) => {
         return res.json({ error: "User not found" });
     }
 
-    const rank = await getGroupRank(userId);
+    const groupInfo = await getGroupInfo(userId);
 
     res.json({
         player: user,
         userId: userId,
-        rank: rank
+        rank: groupInfo.rank,
+        roleId: groupInfo.roleId,
+        roleName: groupInfo.roleName
     });
 });
 
-// ---------- 4. Home route ----------
+// ---------- 4. Home ----------
 app.get("/", (req, res) => {
     res.send("Roblox API is running 🚀");
 });
 
-// ---------- 5. Start server ----------
+// ---------- 5. Start ----------
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
