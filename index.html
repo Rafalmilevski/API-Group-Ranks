@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>API Getting Group Ranks Easily</title>
-</head>
 <body>
-  <h1>API Tool</h1>
-  <p>Used for api only</p>
+<h1>Group Ranks</h1>
+
+<button onclick="loadRanks()">Load ranks</button>
+
+<pre id="output"></pre>
+
+<script>
+async function loadRanks() {
+    const res = await fetch("https://groups.roblox.com/v1/groups/35091112/roles");
+    const data = await res.json();
+
+    let text = "";
+
+    data.roles.forEach(role => {
+        text += role.name + " = " + role.rank + "\n";
+    });
+
+    document.getElementById("output").innerText = text;
+}
+</script>
+
 </body>
 </html>
